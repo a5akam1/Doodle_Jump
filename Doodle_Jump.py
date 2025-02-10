@@ -6,6 +6,8 @@ WIDTH = 400
 HEIGHT = 500
 background = pygame.transform.scale(pygame.image.load("background.jpg"),
                                     (WIDTH, HEIGHT))
+bullet_img = pygame.transform.scale(pygame.image.load("bullet.png"), (25, 25))
+
 
 player = pygame.transform.scale(pygame.image.load("Doodle.png"), (90, 70))
 platform_img = pygame.transform.scale(pygame.image.load("rect.png"), (90, 45))
@@ -15,6 +17,7 @@ timer = pygame.time.Clock()
 score = 0
 high_score = 0
 game_over = False
+bullets = []
 
 player_x = 170
 player_y = 400
@@ -123,6 +126,10 @@ while running:
             if event.key == pygame.K_d:
                 x_change = 0
 
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_w and not game_over:
+                bullets.append([player_x + 37, player_y])
+
     jump = check_collisions(platforms, jump)
     player_x += x_change
     if player_y < 440:
@@ -151,6 +158,12 @@ while running:
     if score - jump_last > 50:
         jump_last = score
         super_jumps += 1
+
+    for bullet in bullets:
+        bullet[1] -= 5  # пулька вверх
+        screen.blit(bullet_img, (bullet[0], bullet[1]))
+
+    bullets = [bullet for bullet in bullets if bullet[1] > 0]  #минус пульки улетевшие за экран
 
     pygame.display.flip()
 
